@@ -23,6 +23,8 @@ async function bootstrap() {
     origin: "*"
   })
 
+  const tempDir = join(__dirname, 'temp')
+  if(!existsSync(tempDir)) mkdirSync(tempDir, { recursive: true })
   // ******* temp dir for upload task
   const multerDir = join(__dirname, 'temp', 'multer')
   if(!existsSync(multerDir)) mkdirSync(multerDir, { recursive: true})
@@ -40,6 +42,7 @@ async function bootstrap() {
         API Collection http://localhost:${PORT}/docs
     +================================================+
     `)
+    
   await app.listen(PORT);
 }
 bootstrap();
