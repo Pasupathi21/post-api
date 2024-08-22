@@ -28,6 +28,7 @@ import { QueueModule } from './services/queue/queue.module';
 // features
 import { AuthenticationModule } from './features/authentication/authentication.module';
 import { UsermanagementModule } from './features/usermanagement/usermanagement.module';
+import { FirebaseModule } from './services/firebase/firebase.module';
 
 
 @Module({
@@ -69,6 +70,7 @@ import { UsermanagementModule } from './features/usermanagement/usermanagement.m
     CronModule,
     SocketModule,
     QueueModule,
+    FirebaseModule,
 
   ],
   controllers: [AppController],

@@ -1,4 +1,9 @@
-import { Module } from '@nestjs/common';
+import { Module, Global } from '@nestjs/common';
+import { SocketGateway } from './socket.gateway';
 
-@Module({})
+@Global()
+@Module({
+    providers: [SocketGateway],
+    exports: [SocketGateway]
+})
 export class SocketModule {}
