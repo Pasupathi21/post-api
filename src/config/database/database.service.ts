@@ -8,6 +8,7 @@ import { ModelsType } from './model/index'
 // all models
 import { Test } from './model/schema/test'
 import { TestTwo }from './model/schema/test-two'
+import { Users } from './model/schema/users'
 
 @Injectable()
 export class DatabaseService {
@@ -16,11 +17,13 @@ export class DatabaseService {
     constructor(
         // added all model schemas
         @InjectModel(Test.name) Test: Model<Test>,
-        @InjectModel(TestTwo.name) TestTwo: Model<TestTwo>
+        @InjectModel(TestTwo.name) TestTwo: Model<TestTwo>,
+        @InjectModel(Users.name) Users: Model<Users>
     ){
         this.models = {
             Test,
-            TestTwo
+            TestTwo,
+            Users
         }
     }
 

@@ -1,34 +1,38 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, HttpException, Res } from '@nestjs/common';
 import { AuthenticationService } from './authentication.service';
-import { CreateAuthenticationDto } from './dto/create-authentication.dto';
+import { SigninDto, SignupDto } from './dto/create-authentication.dto';
 import { UpdateAuthenticationDto } from './dto/update-authentication.dto';
+import { ResponseService } from 'src/services/response/response.service';
+import { Response } from 'express';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Authentication')
 @Controller('authentication')
 export class AuthenticationController {
-  constructor(private readonly authenticationService: AuthenticationService) {}
+  constructor(
+    private readonly responseService: ResponseService,
+    private readonly authenticationService: AuthenticationService
+  ) {}
 
-  @Post()
-  create(@Body() createAuthenticationDto: CreateAuthenticationDto) {
-    return this.authenticationService.create(createAuthenticationDto);
+  @Post('/signin')
+  async signIn(@Body() signinPayload: SigninDto, @Res() res: Response) {
+    try{
+      const resolveData: any = await this.authenticationService.signIn(signinPayload);
+      this.responseService.success(res, resolveData)
+    }catch(error){
+      this.responseService.handleException(error)
+    }
   }
 
-  @Get()
-  findAll() {
-    return this.authenticationService.findAll();
+  @Post('/siginup')
+  async signUp(@Body() signupPayload: SignupDto, @Res() res: Response) {
+    try{
+      const resolveData: any = await this.authenticationService.signUp(signupPayload)
+      this.responseService.success(res, null, resolveData?.statusCode, resolveData?.message)
+    }catch(error){
+      this.responseService.handleException(error)
+    }
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.authenticationService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateAuthenticationDto: UpdateAuthenticationDto) {
-    return this.authenticationService.update(+id, updateAuthenticationDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.authenticationService.remove(+id);
-  }
+  
 }

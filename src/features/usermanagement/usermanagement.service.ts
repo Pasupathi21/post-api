@@ -13,7 +13,8 @@ export class UsermanagementService {
     try{
       const Model = this.DB.getModels()
     const createData = await Model.Test.create({
-      message: 'Test messgaes'
+      message: 'Test messgaes 1',
+      description: 'test desc'
     })
     // return 'This action adds a new usermanagement';
     return Promise.resolve(createData)

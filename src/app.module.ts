@@ -4,6 +4,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config'
 import { APP_FILTER } from '@nestjs/core';
 import { join } from 'path'
 import { MongooseModule } from '@nestjs/mongoose'
+import { JwtModule, JwtService } from '@nestjs/jwt'
 
 // app module
 import { AppController } from './app.controller';
@@ -37,6 +38,17 @@ import { UsermanagementModule } from './features/usermanagement/usermanagement.m
       envFilePath: join(__dirname, '..', `.env.${process.env.NODE_ENV}`)
     }),
 
+    // jwt
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        secret: configService.get<string>('JWT_SECRET'),
+        global: true,
+        signOptions: { expiresIn: configService.get<string>("TOKEN_EXPIRE") }
+      }),
+    }),
+
     // config
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
@@ -68,7 +80,7 @@ import { UsermanagementModule } from './features/usermanagement/usermanagement.m
     {
       provide: APP_FILTER,
       useClass: GlobalExceptionFilter
-    } 
+    },
   ],
   exports: [
     // ResponseService
