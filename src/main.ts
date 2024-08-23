@@ -23,6 +23,13 @@ async function bootstrap() {
     origin: "*"
   })
 
+  // global prefix
+  app.setGlobalPrefix('api')
+
+  // template engine setup
+  app.setViewEngine('pug')
+  app.setBaseViewsDir(join(__dirname, 'views'))
+
   const tempDir = join(__dirname, 'temp')
   if(!existsSync(tempDir)) mkdirSync(tempDir, { recursive: true })
   // ******* temp dir for upload task
@@ -38,7 +45,7 @@ async function bootstrap() {
   console.log("PORT >>>>>", PORT)
   logger.log(`
     +================================================+
-        server running on http://localhost:${PORT}
+        server running on http://localhost:${PORT}/api
         API Collection http://localhost:${PORT}/docs
     +================================================+
     `)
