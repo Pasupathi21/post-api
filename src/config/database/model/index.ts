@@ -9,10 +9,6 @@ export const MODEL_SCHEMAS = [
         schema: TestSchema,
     },
     {
-        name: TestTwo.name,
-        schema: TestSchemaTwo,
-    },
-    {
         name: Users.name,
         schema: UsersSchema
     }
@@ -20,6 +16,5 @@ export const MODEL_SCHEMAS = [
 
 export interface ModelsType {
     Test: Model<Test>;
-    TestTwo: Model<TestTwo>;
     Users: Model<Users>
 }

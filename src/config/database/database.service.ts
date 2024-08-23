@@ -17,12 +17,10 @@ export class DatabaseService {
     constructor(
         // added all model schemas
         @InjectModel(Test.name) Test: Model<Test>,
-        @InjectModel(TestTwo.name) TestTwo: Model<TestTwo>,
         @InjectModel(Users.name) Users: Model<Users>
     ){
         this.models = {
             Test,
-            TestTwo,
             Users
         }
     }
