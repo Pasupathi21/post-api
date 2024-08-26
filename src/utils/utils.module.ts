@@ -1,14 +1,17 @@
 import { Module, Global } from '@nestjs/common'
 import { GeneralService } from './generals/generals.service';
+import { FileHandlingService } from './filehandling/filehandling.service';
 
 @Global()
 @Module({
     imports: [],
     providers: [
-        GeneralService
+        GeneralService,
+        FileHandlingService
     ],
     exports: [
-        GeneralService
+        GeneralService,
+        FileHandlingService
     ]
 })
 export class UtilsModule {}

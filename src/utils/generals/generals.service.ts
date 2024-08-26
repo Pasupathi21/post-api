@@ -8,7 +8,7 @@ export class GeneralService {
         return Buffer.isBuffer(data)
     }
 
-    convertBuffer(data: []): Buffer | any {
+    convertBuffer(data: [] = []): Buffer | any {
         return Buffer.from([...data])
     }
 }

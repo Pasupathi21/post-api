@@ -34,8 +34,9 @@ import { UsermanagementModule } from './features/usermanagement/usermanagement.m
 import { FirebaseModule } from './services/firebase/firebase.module';
 import { PostModule } from './features/post/post.module';
 import { UtilsModule } from './utils/utils.module';
+import { MulterModule } from '@nestjs/platform-express';
 
-
+console.log(">>>>>>>>>>>>>>>>>>>>.", join(__dirname, 'temp'))
 
 @Module({
   imports: [
@@ -65,6 +66,11 @@ import { UtilsModule } from './utils/utils.module';
       })
     }),
     DatabaseModule,
+
+    //upload dest file
+    MulterModule.register({
+      dest: join(__dirname, 'temp')
+    }),
 
     // features
     AuthenticationModule,
@@ -98,4 +104,6 @@ import { UtilsModule } from './utils/utils.module';
     // ResponseService
   ]
 })
-export class AppModule {}
+
+export class AppModule {
+}

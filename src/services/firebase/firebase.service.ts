@@ -2,6 +2,7 @@ import { Injectable, Logger, HttpException, HttpStatus } from '@nestjs/common';
 import { initializeApp, FirebaseApp } from 'firebase/app'
 import { FirebaseStorage, getStorage, uploadBytesResumable, ref, getDownloadURL } from 'firebase/storage'
 import { imageMimeTypes, audioMimeTypes, videoMimeTypes, documentMimeTypes} from 'src/data/app.const'
+import { FileHandlingService } from 'src/utils/filehandling/filehandling.service';
 import { GeneralService } from 'src/utils/generals/generals.service';
 
 type fileType = string | 'IMAGE' | 'VIDEO' | 'AUDIO' | 'DOC'
@@ -21,7 +22,8 @@ export class FirebaseService {
     });
     storageInstance: FirebaseStorage = getStorage(this.firebaseApp)
     constructor(
-       private readonly genService: GeneralService
+       private readonly genService: GeneralService,
+       private readonly fileService: FileHandlingService
 
     ){}
     
@@ -34,17 +36,8 @@ export class FirebaseService {
     }
 
     private async upload_to_firebase(file: Record<string, any>, fileType: fileType) {
-        return new Promise((resolve: (value: any) => void, reject: (value: any) => void) => {
+        return new Promise(async (resolve: (value: any) => void, reject: (value: any) => void) => {
             try {
-                console.log("firebaseApp >>>>>>>", {
-                    apiKey: process?.env?.API_KEY,
-                    authDomain: process?.env?.AUTH_DOMAIN,
-                    projectId: process?.env?.PROJECT_ID,
-                    storageBucket: process?.env?.STORAGE_BUCKET,
-                    messagingSenderId: process?.env?.MESSAGING_SENDER_ID,
-                    appId: process?.env?.APP_ID,
-                    measurementId: process?.env?.MEASUREMENT_ID
-                })
                 let folderHierarchy = 'POSTS-APP/'
                 // folderHierarchy += fileType === 'IMAGE' ? 'images' :
                 //     fileType === 'AUDIO' ? 'audios' :
@@ -54,11 +47,12 @@ export class FirebaseService {
                 const fullPath = `${folderHierarchy}${this.getFolderHierarchyPath(file)}/${Date.now()}-${file?.originalname}`
                 this.logger.log(fullPath)
                 const storageRef = ref(this.storageInstance, fullPath)
-                console.log("file?.buffer >>>>", file?.buffer)
-                const bufferData = this.genService.isBuffer(file?.buffer) ? file?.buffer : this.genService.convertBuffer(file?.buffer?.data || [])
+                const fileAsaBuffer = await this.fileService._readFile(file.path)
+                console.log("fileAsaBuffer >>>>>>>>>>", fileAsaBuffer)
+                // const bufferData = this.genService.isBuffer(file?.buffer) ? file?.buffer : this.genService.convertBuffer(file?.buffer?.data || [])
                 const uploadTask = uploadBytesResumable(
                     storageRef,
-                    bufferData,
+                    fileAsaBuffer,
                     {
                         contentType: file.mimetype
                     })
@@ -67,6 +61,7 @@ export class FirebaseService {
                 },
                     (error) => {
                         console.log("error", error)
+                        this.fileService.unlinkFile(file?.path)
                         // new HttpException(error?.message, HttpStatus.INTERNAL_SERVER_ERROR)
                     },
                     async () => {
@@ -75,8 +70,11 @@ export class FirebaseService {
                                 ...uploadTask.snapshot.metadata,
                                 downloadUrl: await getDownloadURL(uploadTask.snapshot.ref)
                             })
+                            this.fileService.unlinkFile(file?.path)
+
                         } catch (err) {
                             this.logger.log("catch error", err)
+                            this.fileService.unlinkFile(file?.path)
                             // new HttpException(err?.message, HttpStatus.INTERNAL_SERVER_ERROR)
                         }
                     }
