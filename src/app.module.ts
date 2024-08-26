@@ -5,6 +5,9 @@ import { APP_FILTER } from '@nestjs/core';
 import { join } from 'path'
 import { MongooseModule } from '@nestjs/mongoose'
 import { JwtModule, JwtService } from '@nestjs/jwt'
+import { BullBoardModule } from '@bull-board/nestjs';
+import { BullAdapter } from '@bull-board/api/bullAdapter'
+import { QUEUE_CONST } from './data/queue.const';
 
 // app module
 import { AppController } from './app.controller';
@@ -29,6 +32,9 @@ import { QueueModule } from './services/queue/queue.module';
 import { AuthenticationModule } from './features/authentication/authentication.module';
 import { UsermanagementModule } from './features/usermanagement/usermanagement.module';
 import { FirebaseModule } from './services/firebase/firebase.module';
+import { PostModule } from './features/post/post.module';
+import { UtilsModule } from './utils/utils.module';
+
 
 
 @Module({
@@ -71,6 +77,10 @@ import { FirebaseModule } from './services/firebase/firebase.module';
     SocketModule,
     QueueModule,
     FirebaseModule,
+    PostModule,
+
+    // utils
+    UtilsModule,
 
   ],
   controllers: [AppController],

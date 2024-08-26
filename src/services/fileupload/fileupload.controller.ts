@@ -23,6 +23,23 @@ export class FileuploadController {
     type: FilesUploadDto
   })
   @UsePipes(new UploadFileValidation())
+  async uploadFilesWithJob(@UploadedFiles() files: Array<Express.Multer.File>, @Res() res: Response) {
+    try {
+      const resolveRes:any = await this.fileuploadService.uploadFilesWithJobs(files)
+      return this.responseService.success(res, resolveRes, HttpStatus.OK, 'upload is processing')
+    } catch (error) {
+      throw new HttpException({ message: error.message, error: JSON.stringify(error) }, HttpStatus.INTERNAL_SERVER_ERROR)
+    }
+  }
+
+  @Post('files-v1')
+  @UseInterceptors(FilesInterceptor('files', MAX_FILES_UPLOAD_COUNT))
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    description: 'upload files',
+    type: FilesUploadDto
+  })
+  @UsePipes(new UploadFileValidation())
   async uploadFiles(@UploadedFiles() files: Array<Express.Multer.File>, @Res() res: Response) {
     try {
       const resolveRes:any = await this.fileuploadService.uploadFiles(files)

@@ -1,5 +1,7 @@
 import { Schema, SchemaFactory, Prop } from '@nestjs/mongoose'
-import { Document } from 'mongoose'
+import { Document, Types  } from 'mongoose'
+// import reference model
+import { Users } from './users'
 
 @Schema({
     timestamps: {
@@ -9,10 +11,20 @@ import { Document } from 'mongoose'
     versionKey: false
 })
 export class Posts extends Document {
-    @Prop({ type: })
-    user_id
+    @Prop({ type: Types.ObjectId, ref: 'Users', required: true })
+    user_id: Users
 
-    @Prop()
+    @Prop({})
+    title: string
+
+    @Prop({})
+    description: string
+
+    @Prop({ required: true })
+    post_link: string
+
+    @Prop({ type: Object})
+    meta_data: Record<string, any>
     
 }
 
