@@ -7,6 +7,11 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
 import { join } from 'path';
 import { existsSync, mkdirSync } from 'fs';
 import { Logger } from '@nestjs/common';
+import { ExpressAdapter } from '@bull-board/express'
+import { createBullBoard } from '@bull-board/api';
+import { BullAdapter } from '@bull-board/api/bullAdapter';
+import { QUEUE_CONST } from 'src/data/queue.const'
+import { Queue } from 'bullmq';
 
 
 async function bootstrap() {
@@ -40,6 +45,19 @@ async function bootstrap() {
   const swaggerOpts: any = new DocumentBuilder().setTitle('Api Collection').setDescription('').setVersion('0.0.0')
   const apiDocument = SwaggerModule.createDocument(app, swaggerOpts)
   SwaggerModule.setup('docs', app, apiDocument)
+
+  //========= bullboard setup 
+  const serverAdapter = new ExpressAdapter();
+  const bullBoardPath = '/queue-console'
+  serverAdapter.setBasePath(bullBoardPath)
+  const queueArray = QUEUE_CONST.map(item => new Queue(item.name))
+  createBullBoard({
+    queues: [
+      ...queueArray.map((q: any) => new BullAdapter(q))
+    ],
+    serverAdapter
+  })
+  app.use(bullBoardPath, serverAdapter.getRouter())
 
   const PORT = process.env.PORT || 2200
   console.log("PORT >>>>>", PORT)

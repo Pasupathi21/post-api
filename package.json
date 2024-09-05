@@ -29,6 +29,7 @@
     "@nestjs/platform-express": "^10.0.0",
     "bcrypt": "^5.1.1",
     "bull": "^4.16.0",
+    "bullmq": "^5.12.12",
     "class-validator": "^0.14.1",
     "dotenv": "^16.4.5",
     "firebase": "^10.13.0",
